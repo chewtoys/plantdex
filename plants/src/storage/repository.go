@@ -14,13 +14,8 @@ import (
 )
 
 func connectDatabase() *mongo.Collection {
-	var isDevelopment = os.Getenv("MODE") == "development"
-	var mongodbURI string
-	if isDevelopment {
-		mongodbURI = os.Getenv("PLANTS_DEVELOPMENT_MONGODB_URI")
-	} else {
-		mongodbURI = os.Getenv("PLANTS_PRODUCTION_MONGODB_URI")
-	}
+	isDevelopment := os.Getenv("MODE") == "development"
+	mongodbURI := os.Getenv("PLANTS_MONGODB_URI")
 
 	client, err := mongo.Connect(
 		context.Background(),
@@ -37,14 +32,13 @@ func connectDatabase() *mongo.Collection {
 
 	fmt.Println("Plants database ready ✅")
 
-	var databaseName string
+	databaseName := os.Getenv("PLANTS_DATABASE_NAME")
+	var collectionName string
 	if isDevelopment {
-		databaseName = os.Getenv("PLANTS_DEVELOPMENT_DATABASE_NAME")
+		collectionName = os.Getenv("PLANTS_DEVELOPMENT_COLLECTION_NAME")
 	} else {
-		databaseName = os.Getenv("PLANTS_PRODUCTION_DATABASE_NAME")
+		collectionName = os.Getenv("PLANTS_PRODUCTION_COLLECTION_NAME")
 	}
-
-	collectionName := os.Getenv("PLANTS_COLLECTION_NAME")
 
 	return client.Database(databaseName).Collection(collectionName)
 }
